@@ -81,7 +81,7 @@ sleep:              0
 logging:            true
 # File to log to.  Somewhere in /tmp/ is recommended as it is a ram-disk on most distros and allows fastest write speeds.
 # /tmp/ is also deleted on shutdown.
-log_file:           /tmp/dthread-log
+log_file:           /tmp/yarn-log
 # Trail string, to use.
 trail:              …
 # The text to use when a notification is sent without a summary/body.
