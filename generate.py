@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from time import sleep #Import the sleep function, which allows us to delay prints to stdout.
 import argparse #For parsing arguments easily.
