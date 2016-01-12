@@ -1,3 +1,5 @@
+# The config is a work in progress, I am aware that it is not explained very well.
+
 [lemonbar]
 # Position of the first notification, other notifications will build off this.  0 is the bottom of the screen.
 xpos:               7
