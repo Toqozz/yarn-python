@@ -1,7 +1,7 @@
 from configparser import RawConfigParser
 from os.path import expanduser
 
-#proving that we are in development branch
+#we are on master here
 
 parser = RawConfigParser()
 parser.read(expanduser('~') + '/.config/yarn/config')
