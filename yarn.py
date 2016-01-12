@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import c
 import dbus
 import ctypes
@@ -8,7 +10,6 @@ import dbus.service
 import multiprocessing
 from generate import scroll
 from time import sleep, time
-from html.parser import HTMLParser
 from xml.sax.saxutils import unescape
 from dbus.mainloop.glib import DBusGMainLoop
 
