@@ -2,7 +2,7 @@ from configparser import RawConfigParser
 from os.path import expanduser
 
 parser = RawConfigParser()
-parser.read(expanduser('~') + '/.config/dthread/config')
+parser.read(expanduser('~') + '/.config/yarn/config')
 
 #[lemonbar]
 xpos = parser.getint('lemonbar', 'xpos')
