@@ -1,0 +1,93 @@
+[lemonbar]
+# Position of the first notification, other notifications will build off this.  0 is the bottom of the screen.
+xpos:               7
+# Same as above, 0 is the very left of the screen.
+ypos:               30
+# The gap between notifications.
+gap:                7
+# Should new notifications go above or below the selected one?  Option is ignored if [] is set to 0.
+direction:          up
+# Background color for the notification.
+background:         #FF6f9990
+# Foreground (text) color for the notification.
+foreground:         #FF11151b
+# Notification geometry.  [width]x[height]
+width:              300
+height:             16
+# Vertical offset for the text (can be negative).
+offset:             0
+# Maximum number of notifications to show at any given time.
+max_notify:         4
+
+[scroll]
+# Scroll the text at all???
+scroll:             true
+# If the notification body is small enough to fit in the bar width, the notification will stop scrolling once it has scrolled in.
+half_scroll:        true
+# Start scrolling from where? (in characters).  For instance, a value of 16 will print the first 16 characters (including spaces), and then start scrolling.
+#scroll_pos:         20
+# Changes how scroll_space works.
+# To: Characters the text has to scroll to reach the body [left].
+# or: Number of characters that are initially printed [right].
+# [left] will result in consistent time between the body text reaching the summary, whereas [right] will result in consistant initial positioning.
+# REVERSED THIS IF YOU ARE USING [scroll_reverse == true]
+scroll_space_side:  left
+# Number of characters to be scrolled [left], or already scrolled [right]. (see above)
+# Un-sane values will cause bugginess -- it's on you.
+scroll_space:       13
+# The actual length (in chars) that the body of the notification will be cut into in order to be scrolled.  I dont really know how to tell you how to get the right value, but a value of 34 works well with the default config.
+# This value is assumed to be the perfect value in tandom with [summary_chars] and will be adjusted accordingly.
+scroll_len:         34
+# Interval between text updates -- 'scrolls', in seconds.
+scroll_interval:    0.12
+# Reverse the side text scrolls in from.
+# Actually reverses the list used to print text to lemonbar, treat scroll_space_side as the inverse when this is set to true.
+scroll_reverse:     false
+# Scroll through the text again if it has finished / is finishing.  (Until the expire_time is up!!)
+# Amount of times to loop.  Note that this does not necessarily mean that it WILL loop this many times.
+# Refrain from using massive amounts, as a string looped twice is simply the original string appended to itself.
+# 1 is equal to 2*body and is still longer than needed with sane timings.
+loopback_amount:    1
+# The amount of whitespace before the string starts coming again.
+loopback_distance:  9
+# Cut out the middle of strings that are longer than the scroll distance, so that they will fit in one notification.
+# Use in combination with equal scroll_len and scroll_pos for dunst-like behaviour.
+#TODO, remove? # Text will be elipsed to fit into the notification area if it has scrolled everything, and there is still time remaining.
+# DISABLES loopback_amount.
+ellipse:            false
+
+[style]
+# Regular font to use, has no effects.  YOU MUST USE ORIGINAL X11 FONT STYLE, NOT XFT, IF YOU DO NOT HAVE THE LEMONBAR-XFT FORK https://github.com/krypt-n/bar.
+# Font to use for the summary.  Bold, Italic, Regular.
+summary_font:      tewi:size=9:style=bold
+# Font to use for the body.  Bold, Italic, Regular.
+body_font:         tewi:size=9
+# Maximum characters to use in a summary.  A summary longer than this will have the last characters changed to '…'.
+summary_chars:      13
+
+[other]
+# The default timeout to use if none is given.
+timeout:            10
+# The time the daemon will sleep after receiving a notification.  This can help stability in theory, but also makes notifications pop in a more 'organized' way (once every interval opposed to random timings).
+# This causes the notify-send command to sleep for [sleep] before actually completing… which can have adverse effects on some programs (pidgin is one.)
+sleep:              0
+# Log notifications to /tmp/dthread-log .  Allows users to create their own scripts for better manipulation of incoming notifications.
+# There is almost no downside:
+# time it takes to open and write to the file on my system:
+# 1450022841.878977 - 1450022841.878758 = 0.000219 seconds~
+#Files in /tmp/ are typically deleted when turning off your pc.
+logging:            true
+# File to log to.  Somewhere in /tmp/ is recommended as it is a ram-disk on most distros and allows fastest write speeds.
+# /tmp/ is also deleted on shutdown.
+log_file:           /tmp/dthread-log
+# Trail string, to use.
+trail:              …
+# The text to use when a notification is sent without a summary/body.
+# Solely spaces are stripped and will not work (sorry!)
+no_summary:         [unknown]
+no_body:            [no body]
+# Do not display notification that is the same as the previous one.
+# Useful for pidgin as some clients send duplicate messages.
+no_duplicate:       true
+
+# vim: ft=cfg
