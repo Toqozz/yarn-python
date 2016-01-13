@@ -12,7 +12,8 @@ Eventually, hopefully, yarn will have its own way of pushing notifications to th
 
 * Threaded notifications.
     * yarn displays notifications visually as seperate threads.
-      The best way to explain this is through an image. 
+      The best way to explain this is through an image.  
+      The summary kerning is my font, not yarn.
     ![threaded notifications](http://i.imgur.com/I8lvv01.png)
 * Customization.
     * Since yarn displays notifications using lemonbar, the extensive range of customizability is mirrored. 
@@ -21,7 +22,7 @@ Eventually, hopefully, yarn will have its own way of pushing notifications to th
     * The main "feature" that yarn is built around is scrolling text,
       of course it can be disabled, but it is definitely a main feature, at least personally.
     * Scrolling can be manipulated:
-      scroll direction, scroll speed, whether or not to loop the scroll, etc.
+      scroll direction, scroll speed, bounce, whether or not to loop the scroll, etc.
       Everything that I have thought of has been, is being, or is attempting to be implemented.
     * Different fonts for summary/body.
 * Logging
