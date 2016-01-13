@@ -45,17 +45,21 @@ scroll_interval:    0.12
 # Reverse the side text scrolls in from.
 # Actually reverses the list used to print text to lemonbar, treat scroll_space_side as the inverse when this is set to true.
 scroll_reverse:     false
+# 'Bounce' text back and forth when it is longer than can be displayed.
+scroll_bounce:      true
+# Time the text pauses before continuing to bounce off the end.
+bounce_pause:       1
 # Scroll through the text again if it has finished / is finishing.  (Until the expire_time is up!!)
 # Amount of times to loop.  Note that this does not necessarily mean that it WILL loop this many times.
 # Refrain from using massive amounts, as a string looped twice is simply the original string appended to itself.
 # 1 is equal to 2*body and is still longer than needed with sane timings.
+# Do not use this with scroll_bounce, it will be weird if anything.
 loopback_amount:    1
 # The amount of whitespace before the string starts coming again.
 loopback_distance:  9
 # Cut out the middle of strings that are longer than the scroll distance, so that they will fit in one notification.
 # Use in combination with equal scroll_len and scroll_pos for dunst-like behaviour.
-#TODO, remove? # Text will be elipsed to fit into the notification area if it has scrolled everything, and there is still time remaining.
-# DISABLES loopback_amount.
+# Really, there is no point at all to using this with loopback_amount.  It will either offer no change or be buggy.
 ellipse:            false
 
 [style]
@@ -81,7 +85,7 @@ sleep:              0
 logging:            true
 # File to log to.  Somewhere in /tmp/ is recommended as it is a ram-disk on most distros and allows fastest write speeds.
 # /tmp/ is also deleted on shutdown.
-log_file:           /tmp/yarn-log
+log_file:           /tmp/dthread-log
 # Trail string, to use.
 trail:              …
 # The text to use when a notification is sent without a summary/body.
