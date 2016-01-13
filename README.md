@@ -13,8 +13,7 @@ Eventually, hopefully, yarn will have its own way of pushing notifications to th
 * Threaded notifications.
     * yarn displays notifications visually as seperate threads.
       The best way to explain this is through an image.  
-      The summary kerning is my font, not yarn. 
-      
+      The summary kerning is my font, not yarn.  
       ![threaded notifications](http://i.imgur.com/I8lvv01.png)
 * Customization.
     * Since yarn displays notifications using lemonbar, the extensive range of customizability is mirrored. 
