@@ -1,4 +1,5 @@
 #!/bin/bash
+# This script does not work currently.
 
 #Get the latest notification displayed and negate the loopback_distance option.
 var=`cat /tmp/dthread-log | tail -1 | awk -F'         ' '{ print $1 }'` #Split the strings if they have been looped, only use the first one.
