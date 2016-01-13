@@ -51,7 +51,7 @@ Copy the config file to the correct directory:
 
     cd yarn/
     mkdir ~/.config/yarn/
-    cp /config/yarn/config ~/.config/yarn/config
+    cp ./config/yarn/config ~/.config/yarn/config
     
 ## usage
 
