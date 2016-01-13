@@ -42,6 +42,6 @@ def scroll(beginning, str, characters):
     return array
 
 if __name__ == '__main__':
-    array = scroll('summary', 'body text is here', 20)
+    array = scroll('summary', 'body', 20)
     for any in array:
         print(any)

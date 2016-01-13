@@ -13,7 +13,6 @@ from time import sleep, time
 from xml.sax.saxutils import unescape
 from dbus.mainloop.glib import DBusGMainLoop
 
-#TODO, scroll from a different side?
 #TODO, different colors / timeout(?) for different urgency?
 #TODO, write bash script to show last message again.
 
@@ -35,6 +34,17 @@ def notify(summary, body, timeout, signature):
     # The actual BODY length to be held on the bar, since it changes dynamically with the summary.
     len_actual = c.summary_chars-(len(summary)-12)+c.scroll_len # 12 is the length of [ %{T2}%{T1} ].
 
+    # Ellipse if the option is true.
+    if (c.ellipse == True and
+            len(body) > len_actual):
+        body = string_ellipse(body, len_actual)
+    # Imported from generate.scroll, returns a list that can easily be 'scrolled'.  See generate.py.
+    if c.scroll_reverse == True:
+        array = scroll(summary, body, len_actual)
+        array = list(reversed(array))
+    else:
+        array = scroll(summary, body, len_actual)
+
     # Lemonbar options parsed from user config.
     if c.direction == 'up':
         command = 'lemonbar -p -b -B %s -F %s -g %sx%s+%s+%s -f %s -f %s -o %s' % \
@@ -42,17 +52,6 @@ def notify(summary, body, timeout, signature):
     else:
         command = 'lemonbar -p -b -B %s -F %s -g %sx%s+%s+%s -f %s -f %s -o %s' % \
         (c.background, c.foreground, c.width, c.height, c.xpos, c.ypos-((c.gap+c.height)*position), c.body_font, c.summary_font, c.offset)
-
-    if (c.ellipse == True and
-            len(body) > len_actual):
-        body = string_ellipse(body, len_actual)
-
-    # Imported from generate.scroll, returns a list that can easily be 'scrolled'.  See generate.py.
-    if c.scroll_reverse == True:
-        array = scroll(summary, body, len_actual)
-        array = list(reversed(array))
-    else:
-        array = scroll(summary, body, len_actual)
 
     process = subprocess.Popen(command.split(), stdin=subprocess.PIPE, bufsize=1, universal_newlines=True)
     pids[position] = process.pid                        # PID list equal in positions to tracker.
@@ -62,11 +61,11 @@ def notify(summary, body, timeout, signature):
 
 
     # > ----- process loop start ------ < #
-    #TODO, fix bug thing where a long message will hang on last character if the time is long.
     _ = 0
     if c.scroll_space_side == 'left': i = (len_actual-c.scroll_space)-1
     else: i = c.scroll_space
     executed = False
+    bounce = False
     # Be ready for pipes to be broken.
     try:
         while True:
@@ -75,19 +74,38 @@ def notify(summary, body, timeout, signature):
                 break
             # Stop scrolling if the notification is shown all at once.
             elif (c.half_scroll == True and
-                    array[i].strip() == (summary + body).strip() and
-                    executed == False):
+                    executed == False and
+                    array[i].strip() == (summary + body).strip()):
                 executed = True
                 _ = i
-            # Out of text!  Ellipse the message so we have something meaningful to hold onto.
+            # If notification has reached the end (only for longer than bar messages).
+            # This code actually pauses one step before the actual thing being analysed, that's why you see an extra bounce before notifications return.
+            # The solution is to put `process.stdin.write('%s' % (array[_]))` at the top instead of the bottom, but honestly I kind of like it.
+            elif (c.scroll_bounce == True and
+                    len(body) > len_actual and
+                    bounce == False and
+                    i == len(body.strip())):
+                bounce = True
+                _ = i
+                sleep(c.bounce_pause)
+            elif (bounce == True and
+                    i == len_actual-2):
+                bounce = False
+                _ = i
+                sleep(c.bounce_pause)
+            # Out of text!  Don't error!
             elif (i+1 == len(array) and
                     executed == False):
                 executed = True
                 array.append(summary + (string_ellipse(body, len_actual) + '\n'))
                 _ = i+1
             elif executed == False:
-                _ = i
-                i += 1
+                if bounce == True:
+                    _ = i
+                    i -= 1
+                elif bounce == False:
+                    _ = i
+                    i += 1
 
             process.stdin.write('%s' % (array[_]))      # Sometimes, python is strange about converting arrays, should not be an issue.
             sleep(c.scroll_interval)
@@ -126,30 +144,22 @@ def notification_queue(summary, body, timeout):
             return
         sleep(0.1)
 
-    # os.kill(pids[force_value.value], signal.SIGTERM)
-    # Less... accurate than psutil.  Could not find more information online, but when spamming notifications os.kill will cause [force_value] to get hung
-    # on a previous number.  Though it does not seem to execute slower (0.0005305s vs 0.0005886s).  Perhaps psutil forks, and os.kill does not?
-    # It is a very long time before force_value gets changed using os.kill, however.  I do not really understand the behaviour.
-    # Using a while loop with psutil is the most consistent result.
-
 # Shorten text and put an ellipse in the middle.
 def string_ellipse(string, length):
     chop1 = length // 2
-    if length % 2 == 0: chop2 = (length // 2) - 1           # We need to remove a character for the ellipse if string is even, // does it for us if odd.
+    if length % 2 == 0: chop2 = (length // 2) - 1       # We need to remove a character for the ellipse if string is even, // does it for us if odd.
     else: chop2 = length // 2
 
     # 17 + '…' + 17
     string = string[:chop1] + '…' + string[len(string)-chop2:]
     return string
 
-#while len(string) >= length:
-        # Find the middle of the string (does not need to be deadly accurate).
-        # Chop chop.
-        #middle = len(string) // 2
-        #string = string[:middle] + string[middle+1:]
-    # Finally insert ellipses.
-    #string = string[:middle] + '…' + string[middle:]
-    #return string
+# Change &amp; &lt; &gt; &quot; &apos; to & < > " '.
+# Strip new lines, extra whitespace.
+def strip_unescape(text):
+    text = unescape(text, {'&apos;': "'", '&quot;': '"'})
+    text = text.strip().replace('\n', '')
+    return text
 
 # Write to log (if enabled.)
 def file_write(pid, summary, body):
@@ -176,8 +186,7 @@ def print_notification(args):
     )
 
     thread.start()
-    # Don't spam the daemon too much.  Causes notify-send to sleep also.
-    sleep(c.sleep)
+    sleep(c.sleep)                                      # Don't spam the daemon too much.  Causes notify-send to sleep also.
 
 # Thanks to statnot for basic NotificationFetcher class: https://github.com/halhen/statnot
 class NotificationFetcher(dbus.service.Object):
@@ -187,7 +196,6 @@ class NotificationFetcher(dbus.service.Object):
     def Notify(self, app_name, replaces_id, app_icon, summary, body, actions, hints, expire_timeout):
 
         # Handle duplicate notifications
-        # TODO, make it so that the variable is never created if whatever is false.
         if not c.no_duplicate == True:
             pass
         elif (c.no_duplicate == True and
@@ -204,12 +212,8 @@ class NotificationFetcher(dbus.service.Object):
         if body == '' or body.isspace() == True:
             body = c.no_body
 
-        # Change &amp; &lt; &gt; &quot; &apos; to & < > " '.
-        # Strip new lines, extra whitespace.
-        summary = unescape(summary, {'&apos;': "'", '&quot;': '"'})
-        summary = summary.strip().replace('\n', '')
-        body = unescape(body, {'&apos;': "'", '&quot;': '"'})
-        body = body.strip().replace('\n', '')
+        summary = strip_unescape(summary)
+        body = strip_unescape(body)
 
         # If a limitation on summary characters exists, replace the remaining text with a trailing character.
         if (c.summary_chars > 0 and
@@ -220,7 +224,6 @@ class NotificationFetcher(dbus.service.Object):
         # Other methods would require cutting strings and making new ones on the fly, to make it shown at one time at least.
         # This really is the most efficient way to do it.
         if (c.loopback_amount > 0 and
-                c.ellipse == False and
                 len(body) > ((c.summary_chars-len(summary))+c.scroll_len)):     # Add whitespace to the body.
             body = body + ((' '*c.loopback_distance) + body) * c.loopback_amount
 
@@ -232,7 +235,6 @@ class NotificationFetcher(dbus.service.Object):
             self._id += 1
             replaces_id = self._id
         # Expire timeout defaults to -1, set it to a user default.
-        # TODO, support 0.
         if expire_timeout <= 0:
             expire_timeout = c.timeout
 
@@ -253,8 +255,6 @@ class NotificationFetcher(dbus.service.Object):
 
     @dbus.service.method('org.freedesktop.Notifications', in_signature='u', out_signature='')
     def CloseNotification(self, id):
-        # TODO support this.
-        # yarn does not have a built in notify_close function right now.
         pass
 
     @dbus.service.method('org.freedesktop.Notifications', in_signature='', out_signature='ssss')
@@ -272,7 +272,8 @@ if __name__ == '__main__':
     tracker = manager.list(l)                   # Places available for a  notification to be shown.
     pids = manager.list(l)                      # Pids that asociate to the 'places' in the tracker list.
     force_value = manager.Value('i', 0)         # Where to force-place the next notification.
-    previous = manager.Value(ctypes.c_char_p, '')      # To hold the text of the last notification.
+    if c.no_duplicate == True:
+        previous = manager.Value(ctypes.c_char_p, '')   # To hold the text of the last notification.
 
     #multiprocessing.set_start_method('spawn')  # Cannot be used with multiprocesing variables. (that i know of).
 
