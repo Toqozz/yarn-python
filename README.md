@@ -39,6 +39,7 @@ If you are not using the "compiled" version, you will require the following know
 * pytho-psutil 
 * python-dbus 
 * python-gobject 
+* lemonbar or lemonbar-xft
 
 ## install
 
