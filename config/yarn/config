@@ -54,7 +54,7 @@ bounce_pause:       1
 # Refrain from using massive amounts, as a string looped twice is simply the original string appended to itself.
 # 1 is equal to 2*body and is still longer than needed with sane timings.
 # Do not use this with scroll_bounce, it will be weird if anything.
-loopback_amount:    1
+loopback_amount:    0
 # The amount of whitespace before the string starts coming again.
 loopback_distance:  9
 # Cut out the middle of strings that are longer than the scroll distance, so that they will fit in one notification.
