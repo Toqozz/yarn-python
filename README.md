@@ -43,6 +43,20 @@ If you are not using the "compiled" version, you will require the following know
 
 ## install
 
+### compiled
+
+Download the executable from [here](https://www.dropbox.com/s/38abhbuhh1h02mu/yarn-0.9?dl=0)  
+Make the file executable:
+
+    chmod +x yarn
+
+Run yarn directly (`./yarn`) or copy it to your bin folder:
+
+    cp yarn /usr/local/bin
+    yarn
+
+### source
+
 Clone the repository:
 
     cd ~/git/
