@@ -13,6 +13,7 @@ from time import sleep, time
 from xml.sax.saxutils import unescape
 from dbus.mainloop.glib import DBusGMainLoop
 
+#TODO, print notifications to stdout!
 #TODO, add custom scroll length for scroll bounce (easy)
 #TODO, different colors / timeout(?) for different urgency?
 #TODO, write bash script to show last message again.
