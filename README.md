@@ -60,11 +60,11 @@ Run yarn directly (`./yarn`) or copy it to your bin folder:
 Clone the repository:
 
     cd ~/git/
-    git clone https://github.com/Toqozz/yarn.git
+    git clone https://github.com/Toqozz/yarn-python.git
     
 Copy the config file to the correct directory:
 
-    cd yarn/
+    cd yarn-python/
     mkdir ~/.config/yarn/
     cp ./config/yarn/config ~/.config/yarn/config
     
